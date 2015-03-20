@@ -23,7 +23,7 @@
 
     <mvc:default-servlet-handler />
 
-    <context:component-scan base-package="todo.todo.app" />
+    <context:component-scan base-package="todo.app" />
 
     <mvc:resources mapping="/resources/**"
         location="/resources/,classpath:META-INF/resources/"
