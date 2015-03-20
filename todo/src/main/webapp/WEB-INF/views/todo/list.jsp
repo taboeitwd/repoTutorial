@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Todo List</title>
-	<style type="text/css">
-	.strike {
-	    text-decoration: line-through;
-	}
-	</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Todo List</title>
+    <style type="text/css">
+        .strike {
+            text-decoration: line-through;
+        }
+        .alert {
+            border: 1px solid;
+        }
+        .alert-error {
+            background-color: #c60f13;
+            border-color: #970b0e;
+            color: white;
+        }
+        .alert-success {
+            background-color: #5da423;
+            border-color: #457a1a;
+            color: white;
+        }
+        .text-error {
+            color: #c60f13;
+        }
+    </style>
 </head>
 <body>
     <h1>Todo List</h1>
     <div id="todoForm">
-        <!-- (1) -->
+        <t:messagesPanel />
         <form:form action="${pageContext.request.contextPath}/todo/create" method="post" modelAttribute="todoForm">
-            <!-- (2) -->
-            <form:input path="todoTitle" />
+            <form:input  path="todoTitle" />
+            <form:errors path="todoTitle" cssClass="text-error" />
             <input type="submit" value="Create Todo" />
         </form:form>
     </div>
     <hr />
     <div id="todoList">
         <ul>
-            <!-- (3) -->
             <c:forEach items="${todos}" var="todo">
                 <li>
-                    <!-- (4) -->
                     <c:choose>
                         <c:when test="${todo.finished}">
-                            <!-- (5) -->
                             <span class="strike">${f:h(todo.todoTitle)}</span>
                         </c:when>
                         <c:otherwise>
