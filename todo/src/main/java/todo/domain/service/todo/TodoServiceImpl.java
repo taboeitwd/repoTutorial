@@ -72,7 +72,7 @@ public class TodoServiceImpl implements TodoService {
 		/*	REMOVE THIS LINE IF YOU USE JPA
 		todoRepository.save(todo);
 			REMOVE THIS LINE IF YOU USE JPA */
-		return null;
+		return todo;
 	}
 
 	@Override

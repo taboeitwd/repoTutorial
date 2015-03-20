@@ -3,12 +3,13 @@ package todo.app.todo;
 import java.util.Collection;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
+import javax.validation.groups.Default;
 
 import org.dozer.Mapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,9 @@ import org.terasoluna.gfw.common.exception.BusinessException;
 import org.terasoluna.gfw.common.message.ResultMessage;
 import org.terasoluna.gfw.common.message.ResultMessages;
 
+import todo.app.todo.TodoForm.TodoCreate;
+import todo.app.todo.TodoForm.TodoDelete;
+import todo.app.todo.TodoForm.TodoFinish;
 import todo.domain.model.Todo;
 import todo.domain.service.todo.TodoService;
 
@@ -40,13 +44,17 @@ public class TodoController {
 	}
 	
 	@RequestMapping(value = "create" , method = RequestMethod.POST)
-	public String create(Model model , @Valid TodoForm todoForm , BindingResult bindingResult , RedirectAttributes attributes) {
-		
+	public String create(	Model model
+						,	@Validated({Default.class, TodoCreate.class}) TodoForm todoForm
+						,	BindingResult bindingResult
+						,	RedirectAttributes attributes
+						) {
 		if (bindingResult.hasErrors()) {
 			return list(model);
 		}
 		
 		Todo todo = beanMapper.map(todoForm, Todo.class);
+		
 		try {
 			todoService.create(todo);
 		}
@@ -59,4 +67,52 @@ public class TodoController {
 		
 		return "redirect:/todo/list";
 	}
+	
+	@RequestMapping(value = "finish" , method = RequestMethod.POST)
+	public String finish(	Model model
+						,	@Validated({Default.class, TodoFinish.class}) TodoForm todoForm
+						,	BindingResult bindingResult
+						,	RedirectAttributes attributes
+						) {
+		if (bindingResult.hasErrors()) {
+			return list(model);
+		}
+		
+		try {
+			todoService.finish(todoForm.getTodoId());
+		}
+		catch (BusinessException e) {
+			model.addAttribute(e.getResultMessages());
+			return list(model);
+		}
+		
+		attributes.addFlashAttribute(ResultMessages.success().add(ResultMessage.fromText("Finished successfully!")));
+		
+		return "redirect:/todo/list";
+	}
+	
+	@RequestMapping(value = "delete" , method = RequestMethod.POST)
+	public String delete(	Model model
+						,	@Validated({Default.class, TodoDelete.class}) TodoForm todoForm
+						,	BindingResult bindingResult
+						,	RedirectAttributes attributes
+						) {
+		if (bindingResult.hasErrors()) {
+			return list(model);
+		}
+		
+		try {
+			todoService.delete(todoForm.getTodoId());
+		}
+		catch (BusinessException e) {
+			model.addAttribute(e.getResultMessages());
+			return list(model);
+		}
+		
+		attributes.addFlashAttribute(ResultMessages.success().add(ResultMessage.fromText("Deleted successfully!")));
+		
+		return "redirect:/todo/list";
+	}
+
+
 }
