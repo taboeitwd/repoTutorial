@@ -113,6 +113,4 @@ public class TodoController {
 		
 		return "redirect:/todo/list";
 	}
-
-
 }
